@@ -12,7 +12,7 @@ public class UserDAO {
     }
 
     public void addUser(String studentID, String password) {
-        String query = "INSERT INTO users (studentID, password) VALUES (?, ?)";
+        String query = "INSERT INTO user (studentID, password) VALUES (?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, studentID);
@@ -24,7 +24,7 @@ public class UserDAO {
     }
 
     public boolean checkUser(String studentID, String password) {
-        String query = "SELECT * FROM users WHERE studentID = ? AND password = ?";
+        String query = "SELECT * FROM user WHERE studentID = ? AND password = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, studentID);
@@ -42,7 +42,7 @@ public class UserDAO {
     }
 
     public void addBook(String bookName, String author, String edition, String sellerID) {
-        String query = "INSERT INTO books (bookname, author, edition, sellerID, status) VALUES (?, ?, ?, ?, 'Available')";
+        String query = "INSERT INTO book (bookname, author, edition, sellerID, status) VALUES (?, ?, ?, ?, 'Available')";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, bookName);
@@ -56,7 +56,7 @@ public class UserDAO {
     }
 
     public void purchaseBook(String sellerID, String bookName) {
-        String query = "UPDATE books SET status = 'Sold' WHERE sellerID = ? AND bookname = ?";
+        String query = "UPDATE book SET status = 'Sold' WHERE sellerID = ? AND bookname = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, sellerID);
@@ -68,7 +68,7 @@ public class UserDAO {
     }
 
     public void updateBuyerID(String sellerID, String bookName, String buyerID) {
-        String query = "UPDATE books SET buyerID = ? WHERE sellerID = ? AND bookname = ?";
+        String query = "UPDATE book SET buyerID = ? WHERE sellerID = ? AND bookname = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, buyerID);
@@ -81,7 +81,7 @@ public class UserDAO {
     }
 
     public void updateBookStatus(String sellerID, String bookName) {
-        String query = "UPDATE books SET status = 'Updated' WHERE sellerID = ? AND bookname = ?";
+        String query = "UPDATE book SET status = 'Updated' WHERE sellerID = ? AND bookname = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, sellerID);
