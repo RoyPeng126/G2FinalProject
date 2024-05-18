@@ -51,7 +51,7 @@ public class BuyerPanel extends JPanel {
     private void loadBooks() {
         try (Connection conn = DatabaseUtil.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM books")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM book")) {
 
             while (rs.next()) {
                 Vector<String> row = new Vector<>();
