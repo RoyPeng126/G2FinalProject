@@ -4,7 +4,7 @@ import java.util.List;
 
 public class BookDAO {
     public void addBook(Book book) {
-        String query = "INSERT INTO books (bookname, author, edition, sellerID, buyerID) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO book (bookname, author, edition, sellerID, buyerID) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, book.getName());
@@ -20,7 +20,7 @@ public class BookDAO {
 
     public List<Book> getAllBooks() {
         List<Book> books = new ArrayList<>();
-        String query = "SELECT * FROM books";
+        String query = "SELECT * FROM book";
         try (Connection conn = DatabaseUtil.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
@@ -41,7 +41,7 @@ public class BookDAO {
     }
 
     public void updateBookBuyer(String bookname, String buyerID) {
-        String query = "UPDATE books SET buyerID = ? WHERE bookname = ?";
+        String query = "UPDATE book SET buyerID = ? WHERE bookname = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, buyerID);
