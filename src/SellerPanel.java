@@ -58,7 +58,7 @@ public class SellerPanel extends JPanel {
 
     private void loadBooks() {
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM books WHERE sellerID = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM book WHERE sellerID = ?")) {
             stmt.setString(1, currentSellerID);
             ResultSet rs = stmt.executeQuery();
 
