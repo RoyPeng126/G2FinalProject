@@ -10,11 +10,11 @@ public class SellerPanel extends JPanel {
     private JTable bookTable;
     private DefaultTableModel tableModel;
     private UserDAO userDAO;
-    private String currentSellerID;
+    private String sellerID;
 
     public SellerPanel(UserDAO userDAO) {
         this.userDAO = userDAO;
-        this.currentSellerID = userDAO.getCurrentUserID();  // 获取当前登录的卖家ID
+        this.sellerID = userDAO.getCurrentUserID();  // Get current logged-in seller ID
 
         setLayout(new BorderLayout());
 
@@ -22,6 +22,8 @@ public class SellerPanel extends JPanel {
         tableModel.addColumn("Book Name");
         tableModel.addColumn("Author");
         tableModel.addColumn("Edition");
+        tableModel.addColumn("SellerID");
+        tableModel.addColumn("BuyerID");
         tableModel.addColumn("Status");
 
         bookTable = new JTable(tableModel);
@@ -44,8 +46,9 @@ public class SellerPanel extends JPanel {
                 int selectedRow = bookTable.getSelectedRow();
                 if (selectedRow >= 0) {
                     String bookName = (String) tableModel.getValueAt(selectedRow, 0);
-                    userDAO.updateBookStatus(currentSellerID, bookName);
+                    userDAO.updateBookStatus(sellerID, bookName);
                     JOptionPane.showMessageDialog(SellerPanel.this, "Status updated!");
+                    loadBooks();  // Reload books to show the updated status
                 } else {
                     JOptionPane.showMessageDialog(SellerPanel.this, "Please select a book to update.");
                 }
@@ -57,9 +60,12 @@ public class SellerPanel extends JPanel {
     }
 
     private void loadBooks() {
+        // Clear existing rows
+        tableModel.setRowCount(0);
+
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM book WHERE sellerID = ?")) {
-            stmt.setString(1, currentSellerID);
+            stmt.setString(1, sellerID);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -67,6 +73,8 @@ public class SellerPanel extends JPanel {
                 row.add(rs.getString("bookname"));
                 row.add(rs.getString("author"));
                 row.add(rs.getString("edition"));
+                row.add(rs.getString("sellerID"));
+                row.add(rs.getString("buyerID"));
                 row.add(rs.getString("status"));
                 tableModel.addRow(row);
             }
@@ -77,7 +85,7 @@ public class SellerPanel extends JPanel {
 
     private void openAddBookDialog() {
         JFrame addBookFrame = new JFrame("Add Book");
-        addBookFrame.setSize(300, 200);
+        addBookFrame.setSize(300, 250);
         addBookFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel addBookPanel = new JPanel(new GridLayout(5, 2));
@@ -97,6 +105,11 @@ public class SellerPanel extends JPanel {
         addBookPanel.add(editionLabel);
         addBookPanel.add(editionField);
 
+        JLabel sellerIDLabel = new JLabel("Seller ID:");
+        JTextField sellerIDField = new JTextField();
+        addBookPanel.add(sellerIDLabel);
+        addBookPanel.add(sellerIDField);
+
         JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(new ActionListener() {
             @Override
@@ -104,10 +117,11 @@ public class SellerPanel extends JPanel {
                 String bookName = bookNameField.getText();
                 String author = authorField.getText();
                 String edition = editionField.getText();
-                userDAO.addBook(bookName, author, edition, currentSellerID);
+                String sellerID = sellerIDField.getText();
+                userDAO.addBook(bookName, author, edition, sellerID);
                 JOptionPane.showMessageDialog(addBookFrame, "Book added!");
                 addBookFrame.dispose();
-                loadBooks();  // Reload books to show the new book
+                loadBooks();  // 重新加载书籍以显示新书
             }
         });
         addBookPanel.add(submitButton);
